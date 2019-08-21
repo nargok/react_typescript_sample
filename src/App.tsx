@@ -28,6 +28,17 @@ const App = () => {
   const [state, setState] = useState<State>(initialState);
   const [todoText , setTodoText] = useState<string>('');
 
+  const doneTask = (id: number) => {
+    const clonedTaskList = [...state.taskList];
+    for (let i = 0; i < clonedTaskList.length; i++) {
+      if (clonedTaskList[i].id === id) {
+        clonedTaskList[i].status = 'done';
+        break;
+      }
+    }
+    setState({ taskList: clonedTaskList });
+  }
+
   const addTask = () => {
     const taskList = [...state.taskList];
     const id = state.taskList.length;
@@ -50,27 +61,23 @@ const App = () => {
       <ItemWrapper>
         {
           todo.map(t => (
-            <li>
-              <div></div>
-              <span>{t.text}</span>
-            </li>
-          ))
-        }        
-      </ItemWrapper>
-      <Head>Done Task</Head>
-      <ItemWrapper>
-        {
-          done.map(t => (
-            <li>
+            <li onClick={() => doneTask(t.id)} key={t.id}>
               <div></div>
               <span>{t.text}</span>
             </li>
           ))
         }
-        <li>
-          <div></div>
-          <span>Task1</span>
-        </li>
+      </ItemWrapper>
+      <Head>Done Task</Head>
+      <ItemWrapper>
+        {
+          done.map(t => (
+            <li key={t.id}>
+              <div></div>
+              <span>{t.text}</span>
+            </li>
+          ))
+        }        
       </ItemWrapper>
       <AddTask>
         <input type="text" value={todoText} onChange={e => setTodoText(e.target.value)} />
