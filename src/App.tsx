@@ -2,46 +2,79 @@ import React, { useState } from 'react';
 import { Todo } from './types';
 import styled from 'styled-components';
 
-interface State {
-  taskList: Array<{
-    id: number,
-    status: 'todo' | 'done',
-    text: string,
-    created_date: Date,
-  }>
-}
-
 const initialState = {
-  taskList: []
-}
+  taskList: [],
+};
+
+interface State {
+  taskList: Array<Todo>
+};
+
+const getTasks = (taskList: Array<Todo>) => {
+  const todoList = [];
+  const doneList = [];
+
+  for (let i = 0; i < taskList.length; i++) {
+    if (taskList[i].status === 'todo') {
+      todoList.push(taskList[i]);
+      continue
+    }
+    doneList.push(taskList[i]);
+  }
+  return [todoList, doneList];
+};
 
 const App = () => {
   const [state, setState] = useState<State>(initialState);
+  const [todoText , setTodoText] = useState<string>('');
 
+  const addTask = () => {
+    const taskList = [...state.taskList];
+    const id = state.taskList.length;
+    taskList.push({
+      id: id,
+      text: todoText,
+      status: 'todo',
+      createDate: new Date(),
+    });
+    setState({ taskList });
+    setTodoText('');
+  }
+
+
+  const [todo, done] = getTasks(state.taskList);
   return (
     <Wrapper>
       <h1>TODO APP with TypeScript</h1>
       <Head>Todo tasks</Head>
       <ItemWrapper>
-        <li>
-          <div></div>
-          <span>Task2</span>
-        </li>
-        <li>
-          <div></div>
-          <span>Task3</span>
-        </li>
+        {
+          todo.map(t => (
+            <li>
+              <div></div>
+              <span>{t.text}</span>
+            </li>
+          ))
+        }        
       </ItemWrapper>
       <Head>Done Task</Head>
       <ItemWrapper>
+        {
+          done.map(t => (
+            <li>
+              <div></div>
+              <span>{t.text}</span>
+            </li>
+          ))
+        }
         <li>
           <div></div>
           <span>Task1</span>
         </li>
       </ItemWrapper>
       <AddTask>
-        <input type="text"/>
-        <div>add new task</div>
+        <input type="text" value={todoText} onChange={e => setTodoText(e.target.value)} />
+        <div onClick={addTask}>add new task</div>
       </AddTask>
     </Wrapper>
   )
